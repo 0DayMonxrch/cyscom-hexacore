@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register</title>
+    <style>
+        :root {
+            --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
+            --bg-dark: #121212; --text-dark: #f5f5f5; --card-dark: #1f1f1f;
+            --accent: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg-light); color: var(--text-light);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+        .card {
+            width: 100%; max-width: 420px;
+            background-color: var(--card-light);
+            padding: 2rem 1.75rem; border-radius: 0.75rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
+        h2 { margin-bottom: 0.5rem; }
+        p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
+        .field { margin-bottom: 1rem; }
+        input {
+            width: 100%; padding: 0.6rem 0.75rem;
+            border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
+        }
+        body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
+        .btn {
+            width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
+            border: 1px solid transparent; background-color: var(--accent);
+            color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
+        }
+        .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
+        .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
+        .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
+        .top-actions a:hover { text-decoration: underline; }
+        .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
+        small { display: block; margin-top: 1rem; font-size: 0.85rem; }
+        small a { color: var(--accent); text-decoration: none; }
+        small a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="top-actions">
+            <a href="/">Home</a>
+            <button id="theme-toggle" class="btn outline">Dark mode</button>
+        </div>
+        <h2>Create Account</h2>
+        <p class="subtitle">Register with your Gmail address or phone number.</p>
+        <form method="POST" action="/register">
+            <div class="field">
+                <input type="text" name="userid" placeholder="Gmail or phone number" required />
+            </div>
+            <div class="field">
+                <input type="password" name="password" placeholder="Password (min 8 characters)" required minlength="8" />
+            </div>
+            <button type="submit" class="btn">Create Account</button>
+        </form>
+        <small>Already have an account? <a href="/login">Login</a></small>
+    </div>
+    <script>
+        const body = document.body;
+        const themeBtn = document.getElementById('theme-toggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        function applyTheme(theme) {
+            if (theme === 'dark') { body.classList.add('dark'); themeBtn.textContent = 'Light mode'; }
+            else { body.classList.remove('dark'); themeBtn.textContent = 'Dark mode'; }
+            localStorage.setItem('theme', theme);
+        }
+        applyTheme(savedTheme);
+        themeBtn.addEventListener('click', () => {
+            applyTheme(body.classList.contains('dark') ? 'light' : 'dark');
+        });
+    </script>
+</body>
+</html>
