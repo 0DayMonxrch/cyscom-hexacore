@@ -1,93 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Login</title>
-    <style>
-        :root {
-            --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
-            --bg-dark: #121212; --text-dark: #f5f5f5; --card-dark: #1f1f1f;
-            --accent: #3b82f6;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background-color: var(--bg-light); color: var(--text-light);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
-        .card {
-            width: 100%; max-width: 420px;
-            background-color: var(--card-light);
-            padding: 2rem 1.75rem; border-radius: 0.75rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        }
-        body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
-        h2 { margin-bottom: 0.5rem; }
-        p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-        .field { margin-bottom: 1rem; }
-        input {
-            width: 100%; padding: 0.6rem 0.75rem;
-            border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
-        }
-        body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
-        .btn {
-            width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
-            border: 1px solid transparent; background-color: var(--accent);
-            color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
-        }
-        .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
-        .btn + .btn { margin-top: 0.5rem; }
-        .divider {
-            text-align: center; margin: 1.5rem 0 1rem; font-size: 0.85rem; position: relative;
-        }
-        .divider::before, .divider::after {
-            content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #cbd5e1;
-        }
-        .divider::before { left: 0; }
-        .divider::after { right: 0; }
-        body.dark .divider::before, body.dark .divider::after { background-color: #475569; }
-        .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
-        .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
-        .top-actions a:hover { text-decoration: underline; }
-        .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    :root {
+      --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
+      --bg-dark: #121212;  --text-dark: #f5f5f5;  --card-dark: #1f1f1f;
+      --accent: #3b82f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: var(--bg-light); color: var(--text-light);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    }
+    body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+    .card {
+      width: 100%; max-width: 420px;
+      background-color: var(--card-light);
+      padding: 2rem 1.75rem; border-radius: 0.75rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
+    h2 { margin-bottom: 0.5rem; }
+    p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
+    .field { margin-bottom: 1rem; }
+    input {
+      width: 100%; padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
+    }
+    body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
+    .btn {
+      width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
+      border: 1px solid transparent; background-color: var(--accent);
+      color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
+    }
+    .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
+    .btn + .btn { margin-top: 0.5rem; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .divider {
+      text-align: center; margin: 1.25rem 0 1rem; font-size: 0.85rem; position: relative;
+    }
+    .divider::before, .divider::after {
+      content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #cbd5e1;
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+    body.dark .divider::before, body.dark .divider::after { background-color: #475569; }
+    .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
+    .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
+    .top-actions a:hover { text-decoration: underline; }
+    .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
+    .msg { margin-top: 0.75rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 0.4rem; display: none; }
+    .msg.error   { background: #fee2e2; color: #b91c1c; display: block; }
+    .msg.success { background: #dcfce7; color: #166534; display: block; }
+    body.dark .msg.error   { background: #450a0a; color: #fca5a5; }
+    body.dark .msg.success { background: #052e16; color: #86efac; }
+    #otp-section { display: none; }
+    #email-otp-section { display: none; }
+    #resend-timer { font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.7; }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <div class="top-actions">
-            <a href="/">Home</a>
-            <button id="theme-toggle" class="btn outline">Dark mode</button>
-        </div>
-        <h2>Login</h2>
-        <p class="subtitle">Login using your Gmail address or phone number.</p>
-        <form method="POST" action="/login">
-            <div class="field">
-                <input type="text" name="userid" placeholder="Gmail or phone number" required />
-            </div>
-            <div class="field">
-                <input type="password" name="password" placeholder="Password" required />
-            </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        <div class="divider">or</div>
-        <button class="btn outline" type="button" onclick="alert('Google OAuth coming soon.')">Login with Gmail</button>
-        <button class="btn outline" type="button" onclick="alert('Phone OTP coming soon.')">Login with phone number</button>
-        <p style="margin-top:1rem;font-size:0.85rem;">New here? <a href="/register">Create an account</a></p>
+  <div class="card">
+    <div class="top-actions">
+      <a href="/">Home</a>
+      <button id="theme-toggle" class="btn outline">Dark mode</button>
     </div>
-    <script>
-        const body = document.body;
-        const themeBtn = document.getElementById('theme-toggle');
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        function applyTheme(theme) {
-            if (theme === 'dark') { body.classList.add('dark'); themeBtn.textContent = 'Light mode'; }
-            else { body.classList.remove('dark'); themeBtn.textContent = 'Dark mode'; }
-            localStorage.setItem('theme', theme);
-        }
-        applyTheme(savedTheme);
-        themeBtn.addEventListener('click', () => {
-            applyTheme(body.classList.contains('dark') ? 'light' : 'dark');
+    <h2>Login</h2>
+    <p class="subtitle">Login with your credentials or use email OTP.</p>
+
+    <!-- Standard userid + password login -->
+    <div id="standard-section">
+      <form id="login-form">
+        <div class="field">
+          <input type="text" id="userid" placeholder="Gmail or phone number" required />
+        </div>
+        <div class="field">
+          <input type="password" id="password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+    </div>
+
+    <div id="msg-standard" class="msg"></div>
+
+    <div class="divider">or</div>
+
+    <!-- Email OTP login section -->
+    <div id="email-otp-section">
+      <div class="field">
+        <input type="email" id="otp-email" placeholder="Enter your email address" />
+      </div>
+      <button id="send-otp-btn" class="btn outline">Send OTP to Email</button>
+      <div id="resend-timer"></div>
+      <div id="otp-section">
+        <div class="field" style="margin-top:0.75rem;">
+          <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" />
+        </div>
+        <button id="verify-otp-btn" class="btn">Verify OTP &amp; Login</button>
+      </div>
+      <div id="msg-otp" class="msg"></div>
+      <button id="back-btn" class="btn outline" style="margin-top:0.5rem;">Back to password login</button>
+    </div>
+
+    <!-- Toggle button -->
+    <button id="toggle-email-otp" class="btn outline">Login with Email OTP instead</button>
+
+    <p style="margin-top:1rem;font-size:0.85rem;">New here? <a href="/register">Create an account</a></p>
+  </div>
+
+  <script>
+    // ---- Theme ----
+    const body     = document.body;
+    const themeBtn = document.getElementById('theme-toggle');
+    function applyTheme(t) {
+      body.classList.toggle('dark', t === 'dark');
+      themeBtn.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
+      localStorage.setItem('theme', t);
+    }
+    applyTheme(localStorage.getItem('theme') || 'light');
+    themeBtn.addEventListener('click', () => applyTheme(body.classList.contains('dark') ? 'light' : 'dark'));
+
+    // ---- Sections ----
+    const standardSec    = document.getElementById('standard-section');
+    const emailOtpSec    = document.getElementById('email-otp-section');
+    const otpSection     = document.getElementById('otp-section');
+    const toggleBtn      = document.getElementById('toggle-email-otp');
+    const backBtn        = document.getElementById('back-btn');
+
+    toggleBtn.addEventListener('click', () => {
+      standardSec.style.display  = 'none';
+      emailOtpSec.style.display  = 'block';
+      toggleBtn.style.display    = 'none';
+    });
+    backBtn.addEventListener('click', () => {
+      standardSec.style.display = 'block';
+      emailOtpSec.style.display = 'none';
+      toggleBtn.style.display   = 'block';
+      otpSection.style.display  = 'none';
+    });
+
+    // ---- Standard login ----
+    function showMsg(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = 'msg ' + type;
+      el.textContent = text;
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userid   = document.getElementById('userid').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        const r = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userid, password })
         });
-    </script>
+        const data = await r.json();
+        if (r.ok && data.status === 'success') {
+          showMsg('msg-standard', 'success', 'Login successful! Redirecting...');
+          setTimeout(() => window.location.href = '/', 800);
+        } else {
+          showMsg('msg-standard', 'error', data.error || 'Login failed');
+        }
+      } catch { showMsg('msg-standard', 'error', 'Network error'); }
+    });
+
+    // ---- OTP login ----
+    let resendTimer = null;
+    function startResendCooldown() {
+      let secs = 60;
+      const el = document.getElementById('resend-timer');
+      document.getElementById('send-otp-btn').disabled = true;
+      el.textContent = `Resend available in ${secs}s`;
+      resendTimer = setInterval(() => {
+        secs--;
+        if (secs <= 0) {
+          clearInterval(resendTimer);
+          document.getElementById('send-otp-btn').disabled = false;
+          el.textContent = '';
+        } else { el.textContent = `Resend available in ${secs}s`; }
+      }, 1000);
+    }
+
+    document.getElementById('send-otp-btn').addEventListener('click', async () => {
+      const email = document.getElementById('otp-email').value.trim();
+      if (!email) return showMsg('msg-otp', 'error', 'Please enter your email');
+      try {
+        const r = await fetch('/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, purpose: 'login' })
+        });
+        const data = await r.json();
+        if (r.ok && data.status === 'otp_sent') {
+          showMsg('msg-otp', 'success', 'OTP sent! Check your inbox.');
+          otpSection.style.display = 'block';
+          startResendCooldown();
+        } else {
+          showMsg('msg-otp', 'error', data.error || 'Failed to send OTP');
+        }
+      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+    });
+
+    document.getElementById('verify-otp-btn').addEventListener('click', async () => {
+      const email = document.getElementById('otp-email').value.trim();
+      const otp   = document.getElementById('otp-input').value.trim();
+      if (!otp) return showMsg('msg-otp', 'error', 'Please enter the OTP');
+      try {
+        const r = await fetch('/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp, purpose: 'login' })
+        });
+        const data = await r.json();
+        if (r.ok && data.status === 'success') {
+          showMsg('msg-otp', 'success', 'Login successful! Redirecting...');
+          setTimeout(() => window.location.href = '/', 800);
+        } else {
+          showMsg('msg-otp', 'error', data.error || 'Invalid OTP');
+        }
+      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+    });
+  </script>
 </body>
 </html>
