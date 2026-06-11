@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        :root {
+            --bg-light: #f5f5f5;
+            --text-light: #222222;
+            --nav-light: #ffffff;
+            --bg-dark: #121212;
+            --text-dark: #f5f5f5;
+            --nav-dark: #1f1f1f;
+            --accent: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+        body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--nav-light);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        body.dark .navbar { background-color: var(--nav-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+        .brand { font-weight: 600; font-size: 1.2rem; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .user-label { font-size: 0.9rem; }
+        .btn {
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            background-color: var(--accent);
+            color: #ffffff;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .btn.outline {
+            background-color: transparent;
+            color: inherit;
+            border-color: rgba(148, 163, 184, 0.9);
+        }
+        .btn:hover { opacity: 0.9; }
+        main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">My App</div>
+        <div class="nav-right">
+            <span id="user-area" class="user-label">Checking session...</span>
+            <button id="theme-toggle" class="btn outline">Dark mode</button>
+        </div>
+    </nav>
+    <main>
+        <h2>Home Page</h2>
+        <p>Welcome to the home page. Use the toggle in the navbar to switch between light and dark themes.</p>
+    </main>
+    <script>
+        const body = document.body;
+        const themeBtn = document.getElementById('theme-toggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.add('dark');
+                themeBtn.textContent = 'Light mode';
+            } else {
+                body.classList.remove('dark');
+                themeBtn.textContent = 'Dark mode';
+            }
+            localStorage.setItem('theme', theme);
+        }
+        applyTheme(savedTheme);
+        themeBtn.addEventListener('click', () => {
+            const newTheme = body.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+        });
+        fetch('/session')
+            .then(res => res.json())
+            .then(data => {
+                const userArea = document.getElementById('user-area');
+                if (data.loggedIn) {
+                    userArea.innerHTML = `Welcome, <strong>${data.user}</strong> &nbsp;|&nbsp; <a href="/logout">Logout</a>`;
+                } else {
+                    userArea.innerHTML = `<a href="/login">Login</a> &nbsp;|&nbsp; <a href="/register">Register</a>`;
+                }
+            })
+            .catch(() => {
+                document.getElementById('user-area').textContent = 'Error loading session';
+            });
+    </script>
+</body>
+</html>
