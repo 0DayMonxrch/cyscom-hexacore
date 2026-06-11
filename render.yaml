@@ -1,0 +1,26 @@
+services:
+  # --- Python FastAPI backend ---
+  - type: web
+    name: fastapi-node-auth-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 8080
+
+  # --- Node.js Express frontend ---
+  - type: web
+    name: fastapi-node-auth-web
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: PYTHON_URL
+        # After deploying the Python service, paste its URL here.
+        # e.g. https://fastapi-node-auth-api.onrender.com
+        value: https://fastapi-node-auth-api.onrender.com
+      - key: SESSION_SECRET
+        generateValue: true
