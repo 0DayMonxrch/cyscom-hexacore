@@ -1,83 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Register</title>
-    <style>
-        :root {
-            --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
-            --bg-dark: #121212; --text-dark: #f5f5f5; --card-dark: #1f1f1f;
-            --accent: #3b82f6;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background-color: var(--bg-light); color: var(--text-light);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
-        .card {
-            width: 100%; max-width: 420px;
-            background-color: var(--card-light);
-            padding: 2rem 1.75rem; border-radius: 0.75rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        }
-        body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
-        h2 { margin-bottom: 0.5rem; }
-        p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-        .field { margin-bottom: 1rem; }
-        input {
-            width: 100%; padding: 0.6rem 0.75rem;
-            border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
-        }
-        body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
-        .btn {
-            width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
-            border: 1px solid transparent; background-color: var(--accent);
-            color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
-        }
-        .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
-        .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
-        .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
-        .top-actions a:hover { text-decoration: underline; }
-        .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
-        small { display: block; margin-top: 1rem; font-size: 0.85rem; }
-        small a { color: var(--accent); text-decoration: none; }
-        small a:hover { text-decoration: underline; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Register</title>
+  <style>
+    :root {
+      --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
+      --bg-dark: #121212;  --text-dark: #f5f5f5;  --card-dark: #1f1f1f;
+      --accent: #3b82f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: var(--bg-light); color: var(--text-light);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    }
+    body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+    .card {
+      width: 100%; max-width: 420px;
+      background-color: var(--card-light);
+      padding: 2rem 1.75rem; border-radius: 0.75rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
+    h2 { margin-bottom: 0.5rem; }
+    p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
+    .field { margin-bottom: 1rem; }
+    input {
+      width: 100%; padding: 0.6rem 0.75rem;
+      border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
+    }
+    body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
+    .btn {
+      width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
+      border: 1px solid transparent; background-color: var(--accent);
+      color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
+    }
+    .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
+    .btn + .btn { margin-top: 0.5rem; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
+    .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
+    .top-actions a:hover { text-decoration: underline; }
+    .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
+    small { display: block; margin-top: 1rem; font-size: 0.85rem; }
+    small a { color: var(--accent); text-decoration: none; }
+    small a:hover { text-decoration: underline; }
+    .msg { margin-top: 0.75rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 0.4rem; display: none; }
+    .msg.error   { background: #fee2e2; color: #b91c1c; display: block; }
+    .msg.success { background: #dcfce7; color: #166534; display: block; }
+    body.dark .msg.error   { background: #450a0a; color: #fca5a5; }
+    body.dark .msg.success { background: #052e16; color: #86efac; }
+    #otp-verify-section { display: none; }
+    #resend-timer { font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.7; }
+    .divider { text-align: center; margin: 1.25rem 0 1rem; font-size: 0.85rem; position: relative; }
+    .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #cbd5e1; }
+    .divider::before { left: 0; } .divider::after { right: 0; }
+    body.dark .divider::before, body.dark .divider::after { background-color: #475569; }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <div class="top-actions">
-            <a href="/">Home</a>
-            <button id="theme-toggle" class="btn outline">Dark mode</button>
-        </div>
-        <h2>Create Account</h2>
-        <p class="subtitle">Register with your Gmail address or phone number.</p>
-        <form method="POST" action="/register">
-            <div class="field">
-                <input type="text" name="userid" placeholder="Gmail or phone number" required />
-            </div>
-            <div class="field">
-                <input type="password" name="password" placeholder="Password (min 8 characters)" required minlength="8" />
-            </div>
-            <button type="submit" class="btn">Create Account</button>
-        </form>
-        <small>Already have an account? <a href="/login">Login</a></small>
+  <div class="card">
+    <div class="top-actions">
+      <a href="/">Home</a>
+      <button id="theme-toggle" class="btn outline">Dark mode</button>
     </div>
-    <script>
-        const body = document.body;
-        const themeBtn = document.getElementById('theme-toggle');
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        function applyTheme(theme) {
-            if (theme === 'dark') { body.classList.add('dark'); themeBtn.textContent = 'Light mode'; }
-            else { body.classList.remove('dark'); themeBtn.textContent = 'Dark mode'; }
-            localStorage.setItem('theme', theme);
-        }
-        applyTheme(savedTheme);
-        themeBtn.addEventListener('click', () => {
-            applyTheme(body.classList.contains('dark') ? 'light' : 'dark');
+    <h2>Create Account</h2>
+    <p class="subtitle">Register with a username or your email address.</p>
+
+    <!-- Standard registration (username + password) -->
+    <div id="standard-reg">
+      <div class="field">
+        <input type="text" id="userid" placeholder="Username or phone number" />
+      </div>
+      <div class="field">
+        <input type="password" id="password" placeholder="Password (min 8 characters)" minlength="8" />
+      </div>
+      <button id="reg-btn" class="btn">Create Account</button>
+      <div id="msg-standard" class="msg"></div>
+    </div>
+
+    <div class="divider">or</div>
+
+    <!-- Email registration (email + password + OTP verify) -->
+    <div id="email-reg">
+      <div class="field">
+        <input type="email" id="email" placeholder="Email address" />
+      </div>
+      <div class="field">
+        <input type="password" id="email-password" placeholder="Password (min 8 characters)" minlength="8" />
+      </div>
+      <button id="email-reg-btn" class="btn">Register with Email</button>
+      <div id="msg-email" class="msg"></div>
+    </div>
+
+    <!-- OTP verification step (shown after email registration) -->
+    <div id="otp-verify-section">
+      <p style="font-size:0.9rem;margin-bottom:0.75rem;">An OTP has been sent to <strong id="otp-email-display"></strong>. Enter it below to verify your account.</p>
+      <div class="field">
+        <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" />
+      </div>
+      <button id="verify-otp-btn" class="btn">Verify &amp; Complete Registration</button>
+      <button id="resend-otp-btn" class="btn outline">Resend OTP</button>
+      <div id="resend-timer"></div>
+      <div id="msg-otp" class="msg"></div>
+    </div>
+
+    <small>Already have an account? <a href="/login">Login</a></small>
+  </div>
+
+  <script>
+    // ---- Theme ----
+    const body     = document.body;
+    const themeBtn = document.getElementById('theme-toggle');
+    function applyTheme(t) {
+      body.classList.toggle('dark', t === 'dark');
+      themeBtn.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
+      localStorage.setItem('theme', t);
+    }
+    applyTheme(localStorage.getItem('theme') || 'light');
+    themeBtn.addEventListener('click', () => applyTheme(body.classList.contains('dark') ? 'light' : 'dark'));
+
+    function showMsg(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = 'msg ' + type;
+      el.textContent = text;
+    }
+
+    // ---- Standard register ----
+    document.getElementById('reg-btn').addEventListener('click', async () => {
+      const userid   = document.getElementById('userid').value.trim();
+      const password = document.getElementById('password').value;
+      if (!userid || !password) return showMsg('msg-standard', 'error', 'All fields are required');
+      if (password.length < 8) return showMsg('msg-standard', 'error', 'Password must be at least 8 characters');
+      try {
+        const r = await fetch('/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userid, password })
         });
-    </script>
+        const data = await r.json();
+        if (r.ok && data.status === 'success') {
+          showMsg('msg-standard', 'success', 'Account created! Redirecting...');
+          setTimeout(() => window.location.href = '/', 800);
+        } else {
+          showMsg('msg-standard', 'error', data.error || 'Registration failed');
+        }
+      } catch { showMsg('msg-standard', 'error', 'Network error'); }
+    });
+
+    // ---- Email register (triggers OTP) ----
+    let pendingEmail = '';
+
+    document.getElementById('email-reg-btn').addEventListener('click', async () => {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('email-password').value;
+      if (!email || !password) return showMsg('msg-email', 'error', 'All fields are required');
+      if (password.length < 8) return showMsg('msg-email', 'error', 'Password must be at least 8 characters');
+      try {
+        const r = await fetch('/register-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userid: email, password })
+        });
+        const data = await r.json();
+        if (r.ok && data.status === 'otp_sent') {
+          pendingEmail = email;
+          document.getElementById('otp-email-display').textContent = email;
+          document.getElementById('standard-reg').style.display = 'none';
+          document.getElementById('email-reg').style.display     = 'none';
+          document.querySelector('.divider').style.display        = 'none';
+          document.getElementById('otp-verify-section').style.display = 'block';
+          showMsg('msg-otp', 'success', 'OTP sent! Check your inbox.');
+          startResendCooldown();
+        } else {
+          showMsg('msg-email', 'error', data.error || 'Registration failed');
+        }
+      } catch { showMsg('msg-email', 'error', 'Network error'); }
+    });
+
+    // ---- OTP verify ----
+    document.getElementById('verify-otp-btn').addEventListener('click', async () => {
+      const otp = document.getElementById('otp-input').value.trim();
+      if (!otp) return showMsg('msg-otp', 'error', 'Please enter the OTP');
+      try {
+        const r = await fetch('/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: pendingEmail, otp, purpose: 'register' })
+        });
+        const data = await r.json();
+        if (r.ok && data.status === 'success') {
+          showMsg('msg-otp', 'success', 'Email verified! Redirecting...');
+          setTimeout(() => window.location.href = '/', 800);
+        } else {
+          showMsg('msg-otp', 'error', data.error || 'Invalid OTP');
+        }
+      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+    });
+
+    // ---- Resend OTP ----
+    let resendTimer = null;
+    function startResendCooldown() {
+      let secs = 60;
+      const el = document.getElementById('resend-timer');
+      document.getElementById('resend-otp-btn').disabled = true;
+      el.textContent = `Resend available in ${secs}s`;
+      resendTimer = setInterval(() => {
+        secs--;
+        if (secs <= 0) {
+          clearInterval(resendTimer);
+          document.getElementById('resend-otp-btn').disabled = false;
+          el.textContent = '';
+        } else { el.textContent = `Resend available in ${secs}s`; }
+      }, 1000);
+    }
+
+    document.getElementById('resend-otp-btn').addEventListener('click', async () => {
+      try {
+        const r = await fetch('/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: pendingEmail, purpose: 'register' })
+        });
+        const data = await r.json();
+        if (r.ok) {
+          showMsg('msg-otp', 'success', 'OTP resent! Check your inbox.');
+          startResendCooldown();
+        } else {
+          showMsg('msg-otp', 'error', data.error || 'Failed to resend OTP');
+        }
+      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+    });
+  </script>
 </body>
 </html>
