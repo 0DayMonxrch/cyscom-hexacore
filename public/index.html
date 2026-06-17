@@ -2,104 +2,356 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexacore - Cybersecurity Webinar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-light: #f5f5f5;
-            --text-light: #222222;
+            /* CYSCOM Dark Cyber Palette */
+            --bg-dark: #000000;
+            --text-dark: #ffffff;
+            --nav-dark: rgba(5, 5, 5, 0.85);
+            
+            /* High Contrast Light Palette */
+            --bg-light: #f4f4f5;
+            --text-light: #09090b;
             --nav-light: #ffffff;
-            --bg-dark: #121212;
-            --text-dark: #f5f5f5;
-            --nav-dark: #1f1f1f;
-            --accent: #3b82f6;
+            
+            /* Accents */
+            --accent-yellow: #faff6b;
+            --accent-blue: #00d2ff;
+            --accent-blue-dim: rgba(0, 210, 255, 0.15);
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-light);
             color: var(--text-light);
             min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            display: flex;
+            flex-direction: column;
         }
-        body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+
+        /* --- THE CYBER DARK THEME --- */
+        body.dark { 
+            background-color: var(--bg-dark); 
+            color: var(--text-dark); 
+            background-image: 
+                linear-gradient(var(--accent-blue-dim) 1px, transparent 1px),
+                linear-gradient(90deg, var(--accent-blue-dim) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-attachment: fixed;
+        }
+
+
+        /* --- NAVBAR --- */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 1rem 2rem;
             background-color: var(--nav-light);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 10;
+            border-bottom: 1px solid #e5e5e5;
         }
-        body.dark .navbar { background-color: var(--nav-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .brand { font-weight: 600; font-size: 1.2rem; }
-        .nav-right { display: flex; align-items: center; gap: 1rem; }
-        .user-label { font-size: 0.9rem; }
-        .btn {
-            padding: 0.35rem 0.75rem;
-            border-radius: 999px;
-            border: 1px solid transparent;
-            background-color: var(--accent);
-            color: #ffffff;
-            font-size: 0.9rem;
-            cursor: pointer;
+
+        body.dark .navbar { 
+            background-color: var(--nav-dark); 
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2); 
+            backdrop-filter: blur(10px);
         }
-        .btn.outline {
-            background-color: transparent;
+
+        .brand { 
+            font-family: 'Anton', sans-serif;
+            font-size: 1.5rem; 
+            letter-spacing: 1px;
             color: inherit;
-            border-color: rgba(148, 163, 184, 0.9);
+            text-decoration: none;
         }
-        .btn:hover { opacity: 0.9; }
-        main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; }
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+
+        /* Toggle Button */
+        .theme-toggle-btn {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 2px solid #000;
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark .theme-toggle-btn {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            text-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+        }
+
+        body.dark .theme-toggle-btn:hover {
+            background-color: rgba(0, 210, 255, 0.1);
+        }
+
+        /* --- MAIN CONTENT LAYOUT --- */
+        main { 
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem; 
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(4rem, 10vw, 8rem); /* Responsive giant text */
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        body.dark .hero-title {
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .mono-text {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* --- THE "HACK" LOGIC (SHOW/HIDE) --- */
+        /* By default (Light Mode), hide the dark content */
+        .dark-only { display: none; }
+        .light-only { display: block; color: #666; }
+
+        /* When body has .dark class, flip the visibility */
+        body.dark .dark-only { display: block; animation: fadeIn 0.8s ease-in-out; }
+        body.dark .light-only { display: none; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ACTION BUTTONS --- */
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 999px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-yellow);
+            color: #000000;
+            box-shadow: 0 0 15px rgba(250, 255, 107, 0.3);
+            animation: pulse-glow 2s infinite;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(250, 255, 107, 0.6);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            background-color: rgba(0, 210, 255, 0.05);
+        }
+
+        /* The Glitch Animation */
+@keyframes glitch {
+    0% { text-shadow: 2px 0 var(--accent-blue), -2px 0 var(--accent-yellow); }
+    25% { text-shadow: -2px 0 var(--accent-blue), 2px 0 var(--accent-yellow); }
+    50% { text-shadow: 2px 0 var(--accent-yellow), -2px 0 var(--accent-blue); }
+    75% { text-shadow: -2px 0 var(--accent-yellow), 2px 0 var(--accent-blue); }
+    100% { text-shadow: 2px 0 var(--accent-blue), -2px 0 var(--accent-yellow); }
+}
+
+body.dark .dark-glitch:hover {
+    animation: glitch 0.2s infinite;
+    color: #fff;
+}
+
+/* The Blinking Cursor */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+body.dark .mono-text::after {
+    content: '_';
+    display: inline-block;
+    color: var(--accent-blue);
+    animation: blink 1s step-end infinite;
+    margin-left: 5px;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 10px rgba(250, 255, 107, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(250, 255, 107, 0.7); }
+    100% { box-shadow: 0 0 10px rgba(250, 255, 107, 0.3); }
+}
+
+.scanline-text {
+    position: relative;
+    display: inline-block;
+}
+
+body.dark .scanline-text::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* This creates the black stripes over the text */
+    background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.65) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* --- PAGE TRANSITION EFFECTS --- */
+body {
+    /* This makes the page smoothly fade and scale in when it loads */
+    animation: systemBoot 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; /* Starts invisible until the animation runs */
+}
+
+@keyframes systemBoot {
+    from { opacity: 0; transform: scale(0.98) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* This class gets added via JavaScript when the user clicks a link */
+/* --- AGGRESSIVE GLITCH TRANSITION --- */
+body.system-shutdown {
+    animation: accessGranted 0.5s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+    overflow: hidden;
+}
+
+@keyframes accessGranted {
+    0%   { transform: scale(1) translate(0, 0); filter: brightness(1); }
+    10%  { transform: scale(0.99) translate(-3px, 0); filter: brightness(1.3); text-shadow: 3px 0 var(--accent-blue); } 
+    20%  { transform: scale(0.99) translate(3px, 0); filter: brightness(1.5); text-shadow: -3px 0 var(--accent-yellow); }
+    30%  { transform: scale(1) translate(0, 0); filter: brightness(1.8) drop-shadow(0 0 20px var(--accent-blue)); } 
+    100% { transform: scale(1.3); filter: blur(12px) brightness(0); opacity: 0; } 
+}
+
+
     </style>
 </head>
 <body>
+
     <nav class="navbar">
-        <div class="brand">My App</div>
+        <a href="#" class="brand">CYSCOM</a>
         <div class="nav-right">
-            <span id="user-area" class="user-label">Checking session...</span>
-            <button id="theme-toggle" class="btn outline">Dark mode</button>
+            <button id="theme-toggle" class="theme-toggle-btn">INITIATE DARK MODE</button>
         </div>
     </nav>
+
     <main>
-        <h2>Home Page</h2>
-        <p>Welcome to the home page. Use the toggle in the navbar to switch between light and dark themes.</p>
+        <h1 class="hero-title dark-glitch scanline-text">HEXACORE</h1>
+        
+        <p class="mono-text light-only">
+            [ System Locked ] <br><br>
+            Please switch to the dark mode to decrypt further information and access the event registration portal.
+        </p>
+
+        <div class="dark-only">
+            <p class="mono-text" style="color: #d1d5db;">
+                Welcome to a beginner-friendly deep dive into the world of Cybersecurity. 
+                Join our expert speakers and tech leads as they break down core concepts, 
+                tackle real-world vulnerabilities, and answer your questions.
+            </p>
+            
+            <div class="button-group">
+                <a href="/public/login.html" class="action-btn btn-secondary">Login</a>
+                <a href="/public/register.html" class="action-btn btn-primary">Register</a>
+            </div>
+        </div>
     </main>
+
     <script>
         const body = document.body;
         const themeBtn = document.getElementById('theme-toggle');
+        
+        // Force the site to start in Light Mode as requested
         const savedTheme = localStorage.getItem('theme') || 'light';
+
         function applyTheme(theme) {
             if (theme === 'dark') {
                 body.classList.add('dark');
-                themeBtn.textContent = 'Light mode';
+                themeBtn.textContent = 'RESTORE LIGHT MODE';
             } else {
                 body.classList.remove('dark');
-                themeBtn.textContent = 'Dark mode';
+                themeBtn.textContent = 'INITIATE DARK MODE';
             }
             localStorage.setItem('theme', theme);
         }
+
+        // Apply on initial load
         applyTheme(savedTheme);
+
+        // Handle button clicks
         themeBtn.addEventListener('click', () => {
             const newTheme = body.classList.contains('dark') ? 'light' : 'dark';
             applyTheme(newTheme);
         });
-        fetch('/session')
-            .then(res => res.json())
-            .then(data => {
-                const userArea = document.getElementById('user-area');
-                if (data.loggedIn) {
-                    userArea.innerHTML = `Welcome, <strong>${data.user}</strong> &nbsp;|&nbsp; <a href="/logout">Logout</a>`;
-                } else {
-                    userArea.innerHTML = `<a href="/login">Login</a> &nbsp;|&nbsp; <a href="/register">Register</a>`;
-                }
-            })
-            .catch(() => {
-                document.getElementById('user-area').textContent = 'Error loading session';
-            });
+
+// --- SEAMLESS PAGE TRANSITIONS ---
+// Find all links that navigate to other pages
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const targetUrl = this.getAttribute('href');
+        
+        // Only intercept if it's a real link to another page (not '#' or external)
+        if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('http')) {
+            e.preventDefault(); // Stop the browser from instantly jumping
+            
+            // Trigger the "dive in" exit animation
+            document.body.classList.add('system-shutdown');
+            
+            // Wait exactly 400ms (matching the CSS animation) before loading the new page
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 400); 
+        }
+    });
+});
+
     </script>
 </body>
 </html>

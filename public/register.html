@@ -2,111 +2,298 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Hexacore</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
-      --bg-dark: #121212;  --text-dark: #f5f5f5;  --card-dark: #1f1f1f;
-      --accent: #3b82f6;
+      /* CYSCOM Dark Cyber Palette */
+      --bg-dark: #000000;
+      --text-dark: #ffffff;
+      --card-dark: rgba(5, 5, 5, 0.85);
+      
+      /* High Contrast Light Palette */
+      --bg-light: #f4f4f5; 
+      --text-light: #09090b; 
+      --card-light: #ffffff;
+      
+      /* Accents */
+      --accent-yellow: #faff6b;
+      --accent-blue: #00d2ff;
+      --accent-blue-dim: rgba(0, 210, 255, 0.15);
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: var(--bg-light); color: var(--text-light);
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light); 
+      color: var(--text-light);
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      /* Page transition in */
+      animation: systemBoot 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
     }
-    body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+
+    /* --- PAGE TRANSITION EFFECTS --- */
+    @keyframes systemBoot {
+        from { opacity: 0; transform: scale(0.98) translateY(10px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    body.system-shutdown {
+    animation: accessGranted 0.5s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+    overflow: hidden;
+}
+
+@keyframes accessGranted {
+    0%   { transform: scale(1) translate(0, 0); filter: brightness(1); }
+    10%  { transform: scale(0.99) translate(-3px, 0); filter: brightness(1.3); text-shadow: 3px 0 var(--accent-blue); } 
+    20%  { transform: scale(0.99) translate(3px, 0); filter: brightness(1.5); text-shadow: -3px 0 var(--accent-yellow); }
+    30%  { transform: scale(1) translate(0, 0); filter: brightness(1.8) drop-shadow(0 0 20px var(--accent-blue)); } 
+    100% { transform: scale(1.3); filter: blur(12px) brightness(0); opacity: 0; } 
+}
+
+    /* --- THE CYBER DARK THEME --- */
+    body.dark { 
+      background-color: var(--bg-dark); 
+      color: var(--text-dark); 
+      background-image: 
+          linear-gradient(var(--accent-blue-dim) 1px, transparent 1px),
+          linear-gradient(90deg, var(--accent-blue-dim) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-attachment: fixed;
+    }
+
+    /* --- THE REGISTRATION CARD --- */
     .card {
-      width: 100%; max-width: 420px;
+      width: 100%; 
+      max-width: 420px;
       background-color: var(--card-light);
-      padding: 2rem 1.75rem; border-radius: 0.75rem;
+      padding: 2.5rem 2rem; 
+      border-radius: 0; 
       box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      position: relative;
     }
-    body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
-    h2 { margin-bottom: 0.5rem; }
-    p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-    .field { margin-bottom: 1rem; }
+
+    body.dark .card { 
+      background-color: var(--card-dark); 
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      box-shadow: 0 0 30px rgba(0, 210, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Cyber Crosshair corners for the card */
+    body.dark .card::before,
+    body.dark .card::after {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        border: 2px solid var(--accent-blue);
+        pointer-events: none;
+    }
+    body.dark .card::before {
+        top: -1px; left: -1px;
+        border-right: none; border-bottom: none;
+    }
+    body.dark .card::after {
+        bottom: -1px; right: -1px;
+        border-left: none; border-top: none;
+    }
+
+    /* --- TYPOGRAPHY --- */
+    h2 { 
+      font-family: 'Anton', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem; 
+      line-height: 1;
+    }
+
+    /* Targeted CRT Scanlines for the Header */
+    .scanline-text { position: relative; display: inline-block; }
+    body.dark .scanline-text::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.65) 50%);
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    p.subtitle { 
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem; 
+      margin-bottom: 2rem; 
+      color: #64748b;
+    }
+    body.dark p.subtitle { color: #94a3b8; }
+
+    /* --- FORM INPUTS --- */
+    .field { margin-bottom: 1.25rem; }
+    
     input {
-      width: 100%; padding: 0.6rem 0.75rem;
-      border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
+      width: 100%; 
+      padding: 0.75rem 1rem;
+      border-radius: 4px; 
+      border: 1px solid #cbd5e1; 
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
     }
-    body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
+
+    body.dark input { 
+      border-color: rgba(0, 210, 255, 0.3); 
+      background-color: rgba(0, 210, 255, 0.05); 
+      color: var(--accent-yellow); 
+      font-family: 'Roboto Mono', monospace; 
+    }
+
+    body.dark input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    body.dark input::placeholder {
+      color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* --- BUTTONS --- */
     .btn {
-      width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
-      border: 1px solid transparent; background-color: var(--accent);
-      color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
+      width: 100%; 
+      padding: 0.75rem 1rem; 
+      border-radius: 999px;
+      border: 1px solid transparent; 
+      background-color: #09090b;
+      color: #ffffff; 
+      font-size: 0.95rem; 
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer; 
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
     }
-    .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
-    .btn + .btn { margin-top: 0.5rem; }
+
+    body.dark .btn {
+      background-color: var(--accent-yellow);
+      color: #000000;
+      box-shadow: 0 0 10px rgba(250, 255, 107, 0.2);
+    }
+    
+    body.dark .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(250, 255, 107, 0.4);
+    }
+
+    .btn.outline { 
+      background-color: transparent; 
+      color: inherit; 
+      border-color: #64748b; 
+    }
+
+    body.dark .btn.outline {
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      box-shadow: none;
+    }
+
+    body.dark .btn.outline:hover:not(:disabled) {
+      background-color: rgba(0, 210, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+    }
+
+    .btn + .btn { margin-top: 1rem; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
-    .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
-    .top-actions a:hover { text-decoration: underline; }
-    .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
-    small { display: block; margin-top: 1rem; font-size: 0.85rem; }
-    small a { color: var(--accent); text-decoration: none; }
-    small a:hover { text-decoration: underline; }
-    .msg { margin-top: 0.75rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 0.4rem; display: none; }
-    .msg.error   { background: #fee2e2; color: #b91c1c; display: block; }
-    .msg.success { background: #dcfce7; color: #166534; display: block; }
-    body.dark .msg.error   { background: #450a0a; color: #fca5a5; }
-    body.dark .msg.success { background: #052e16; color: #86efac; }
-    #otp-verify-section { display: none; }
-    #resend-timer { font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.7; }
-    .divider { text-align: center; margin: 1.25rem 0 1rem; font-size: 0.85rem; position: relative; }
+
+    /* --- MISC UI ELEMENTS --- */
+    .top-actions { display: flex; justify-content: space-between; margin-bottom: 2rem; align-items: center; }
+    .top-actions a { font-size: 0.9rem; font-family: 'Roboto Mono', monospace; color: var(--accent-blue); text-decoration: none; font-weight: 600; }
+    .top-actions a:hover { text-shadow: 0 0 8px rgba(0, 210, 255, 0.5); }
+    .top-actions button { width: auto; padding: 0.4rem 1rem; font-size: 0.8rem; font-family: 'Roboto Mono', monospace; }
+
+    .divider { text-align: center; margin: 1.5rem 0; font-size: 0.85rem; position: relative; font-family: 'Roboto Mono', monospace; text-transform: uppercase; color: #64748b; }
     .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #cbd5e1; }
     .divider::before { left: 0; } .divider::after { right: 0; }
-    body.dark .divider::before, body.dark .divider::after { background-color: #475569; }
+    body.dark .divider::before, body.dark .divider::after { background-color: rgba(0, 210, 255, 0.3); }
+
+    .msg { margin-top: 1rem; font-size: 0.85rem; font-family: 'Roboto Mono', monospace; padding: 0.75rem; border-radius: 4px; display: none; text-align: center; }
+    .msg.error   { background: #fee2e2; color: #b91c1c; display: block; border: 1px solid #f87171; }
+    .msg.success { background: #dcfce7; color: #166534; display: block; border: 1px solid #4ade80; }
+    body.dark .msg.error { background: rgba(220, 38, 38, 0.1); color: #fca5a5; border: 1px solid #ef4444; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+    body.dark .msg.success { background: rgba(34, 197, 94, 0.1); color: #86efac; border: 1px solid #22c55e; text-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
+
+    #otp-verify-section { display: none; }
+    #resend-timer { font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.8; font-family: 'Roboto Mono', monospace; text-align: center; }
+    
+    small { display: block; margin-top:1.5rem; font-size:0.85rem; text-align: center; font-family: 'Roboto Mono', monospace;}
+    small a { color: var(--accent-blue); text-decoration: none; font-weight: bold;}
+    small a:hover { text-decoration: underline; text-shadow: 0 0 8px rgba(0, 210, 255, 0.5); }
+
+
   </style>
 </head>
 <body>
   <div class="card">
     <div class="top-actions">
-      <a href="/">Home</a>
-      <button id="theme-toggle" class="btn outline">Dark mode</button>
+      <a href="/public/index.html">&lt; RETURN</a>
+      <button id="theme-toggle" class="btn outline">INITIATE DARK MODE</button>
     </div>
-    <h2>Create Account</h2>
-    <p class="subtitle">Register with a username or your email address.</p>
+    <h2 class="scanline-text">REGISTER</h2>
+    <p class="subtitle">Establish your credentials in the Hexacore system.</p>
 
-    <!-- Standard registration (username + password) -->
     <div id="standard-reg">
       <div class="field">
-        <input type="text" id="userid" placeholder="Username or phone number" />
+        <input type="text" id="userid" placeholder="Enter Call-Sign or ID" />
       </div>
       <div class="field">
-        <input type="password" id="password" placeholder="Password (min 8 characters)" minlength="8" />
+        <input type="password" id="password" placeholder="Secure Passphrase (min 8 char)" minlength="8" />
       </div>
-      <button id="reg-btn" class="btn">Create Account</button>
+      <button id="reg-btn" class="btn">Initialize Account</button>
       <div id="msg-standard" class="msg"></div>
     </div>
 
-    <div class="divider">or</div>
+    <div class="divider">or bypass</div>
 
-    <!-- Email registration (email + password + OTP verify) -->
     <div id="email-reg">
       <div class="field">
-        <input type="email" id="email" placeholder="Email address" />
+        <input type="email" id="email" placeholder="Target Email Address" />
       </div>
       <div class="field">
-        <input type="password" id="email-password" placeholder="Password (min 8 characters)" minlength="8" />
+        <input type="password" id="email-password" placeholder="Secure Passphrase (min 8 char)" minlength="8" />
       </div>
-      <button id="email-reg-btn" class="btn">Register with Email</button>
+      <button id="email-reg-btn" class="btn outline">Register via Secure Email</button>
       <div id="msg-email" class="msg"></div>
     </div>
 
-    <!-- OTP verification step (shown after email registration) -->
     <div id="otp-verify-section">
-      <p style="font-size:0.9rem;margin-bottom:0.75rem;">An OTP has been sent to <strong id="otp-email-display"></strong>. Enter it below to verify your account.</p>
+      <p style="font-size:0.9rem;margin-bottom:0.75rem; font-family: 'Roboto Mono', monospace; color: var(--accent-blue);">
+        A decryption key was sent to <br><strong id="otp-email-display" style="color: var(--text-dark);"></strong>.
+      </p>
       <div class="field">
-        <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" />
+        <input type="text" id="otp-input" placeholder="Awaiting 6-digit key..." maxlength="6" />
       </div>
-      <button id="verify-otp-btn" class="btn">Verify &amp; Complete Registration</button>
-      <button id="resend-otp-btn" class="btn outline">Resend OTP</button>
+      <button id="verify-otp-btn" class="btn">Verify &amp; Complete</button>
+      <button id="resend-otp-btn" class="btn outline">Resend Key</button>
       <div id="resend-timer"></div>
       <div id="msg-otp" class="msg"></div>
     </div>
 
-    <small>Already have an account? <a href="/login">Login</a></small>
+    <small>Already registered? <a href="/login">Login here</a></small>
   </div>
 
   <script>
@@ -115,11 +302,23 @@
     const themeBtn = document.getElementById('theme-toggle');
     function applyTheme(t) {
       body.classList.toggle('dark', t === 'dark');
-      themeBtn.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
+      themeBtn.textContent = t === 'dark' ? 'RESTORE LIGHT MODE' : 'INITIATE DARK MODE';
       localStorage.setItem('theme', t);
     }
     applyTheme(localStorage.getItem('theme') || 'light');
     themeBtn.addEventListener('click', () => applyTheme(body.classList.contains('dark') ? 'light' : 'dark'));
+
+    // --- SEAMLESS PAGE TRANSITIONS ---
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetUrl = this.getAttribute('href');
+            if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('http')) {
+                e.preventDefault(); 
+                document.body.classList.add('system-shutdown');
+                setTimeout(() => { window.location.href = targetUrl; }, 400); 
+            }
+        });
+    });
 
     function showMsg(id, type, text) {
       const el = document.getElementById(id);
@@ -132,7 +331,7 @@
       const userid   = document.getElementById('userid').value.trim();
       const password = document.getElementById('password').value;
       if (!userid || !password) return showMsg('msg-standard', 'error', 'All fields are required');
-      if (password.length < 8) return showMsg('msg-standard', 'error', 'Password must be at least 8 characters');
+      if (password.length < 8) return showMsg('msg-standard', 'error', 'Passphrase must be at least 8 characters');
       try {
         const r = await fetch('/register', {
           method: 'POST',
@@ -141,12 +340,12 @@
         });
         const data = await r.json();
         if (r.ok && data.status === 'success') {
-          showMsg('msg-standard', 'success', 'Account created! Redirecting...');
+          showMsg('msg-standard', 'success', 'Account initialized! Redirecting...');
           setTimeout(() => window.location.href = '/', 800);
         } else {
-          showMsg('msg-standard', 'error', data.error || 'Registration failed');
+          showMsg('msg-standard', 'error', data.error || 'Initialization failed');
         }
-      } catch { showMsg('msg-standard', 'error', 'Network error'); }
+      } catch { showMsg('msg-standard', 'error', 'Connection to server lost'); }
     });
 
     // ---- Email register (triggers OTP) ----
@@ -156,7 +355,7 @@
       const email    = document.getElementById('email').value.trim();
       const password = document.getElementById('email-password').value;
       if (!email || !password) return showMsg('msg-email', 'error', 'All fields are required');
-      if (password.length < 8) return showMsg('msg-email', 'error', 'Password must be at least 8 characters');
+      if (password.length < 8) return showMsg('msg-email', 'error', 'Passphrase must be at least 8 characters');
       try {
         const r = await fetch('/register-email', {
           method: 'POST',
@@ -171,18 +370,18 @@
           document.getElementById('email-reg').style.display     = 'none';
           document.querySelector('.divider').style.display        = 'none';
           document.getElementById('otp-verify-section').style.display = 'block';
-          showMsg('msg-otp', 'success', 'OTP sent! Check your inbox.');
+          showMsg('msg-otp', 'success', 'Key transmitted! Check your inbox.');
           startResendCooldown();
         } else {
-          showMsg('msg-email', 'error', data.error || 'Registration failed');
+          showMsg('msg-email', 'error', data.error || 'Initialization failed');
         }
-      } catch { showMsg('msg-email', 'error', 'Network error'); }
+      } catch { showMsg('msg-email', 'error', 'Connection to server lost'); }
     });
 
     // ---- OTP verify ----
     document.getElementById('verify-otp-btn').addEventListener('click', async () => {
       const otp = document.getElementById('otp-input').value.trim();
-      if (!otp) return showMsg('msg-otp', 'error', 'Please enter the OTP');
+      if (!otp) return showMsg('msg-otp', 'error', 'Please enter the key');
       try {
         const r = await fetch('/verify-otp', {
           method: 'POST',
@@ -191,12 +390,12 @@
         });
         const data = await r.json();
         if (r.ok && data.status === 'success') {
-          showMsg('msg-otp', 'success', 'Email verified! Redirecting...');
+          showMsg('msg-otp', 'success', 'System verified! Redirecting...');
           setTimeout(() => window.location.href = '/', 800);
         } else {
-          showMsg('msg-otp', 'error', data.error || 'Invalid OTP');
+          showMsg('msg-otp', 'error', data.error || 'Invalid Key');
         }
-      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+      } catch { showMsg('msg-otp', 'error', 'Connection to server lost'); }
     });
 
     // ---- Resend OTP ----
@@ -205,14 +404,14 @@
       let secs = 60;
       const el = document.getElementById('resend-timer');
       document.getElementById('resend-otp-btn').disabled = true;
-      el.textContent = `Resend available in ${secs}s`;
+      el.textContent = `Transmission locked for ${secs}s`;
       resendTimer = setInterval(() => {
         secs--;
         if (secs <= 0) {
           clearInterval(resendTimer);
           document.getElementById('resend-otp-btn').disabled = false;
           el.textContent = '';
-        } else { el.textContent = `Resend available in ${secs}s`; }
+        } else { el.textContent = `Transmission locked for ${secs}s`; }
       }, 1000);
     }
 
@@ -225,13 +424,15 @@
         });
         const data = await r.json();
         if (r.ok) {
-          showMsg('msg-otp', 'success', 'OTP resent! Check your inbox.');
+          showMsg('msg-otp', 'success', 'Key resent! Check your inbox.');
           startResendCooldown();
         } else {
-          showMsg('msg-otp', 'error', data.error || 'Failed to resend OTP');
+          showMsg('msg-otp', 'error', data.error || 'Failed to resend key');
         }
-      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+      } catch { showMsg('msg-otp', 'error', 'Connection to server lost'); }
     });
   </script>
 </body>
 </html>
+
+```

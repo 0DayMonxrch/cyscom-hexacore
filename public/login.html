@@ -2,83 +2,331 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Hexacore</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-light: #f5f5f5; --text-light: #222222; --card-light: #ffffff;
-      --bg-dark: #121212;  --text-dark: #f5f5f5;  --card-dark: #1f1f1f;
-      --accent: #3b82f6;
+      /* CYSCOM Dark Cyber Palette */
+      --bg-dark: #000000;
+      --text-dark: #ffffff;
+      --card-dark: rgba(5, 5, 5, 0.85);
+      
+      /* High Contrast Light Palette */
+      --bg-light: #f4f4f5; 
+      --text-light: #09090b; 
+      --card-light: #ffffff;
+      
+      /* Accents */
+      --accent-yellow: #faff6b;
+      --accent-blue: #00d2ff;
+      --accent-blue-dim: rgba(0, 210, 255, 0.15);
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: var(--bg-light); color: var(--text-light);
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light); 
+      color: var(--text-light);
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
-    body.dark { background-color: var(--bg-dark); color: var(--text-dark); }
+
+    /* --- THE CYBER DARK THEME --- */
+    body.dark { 
+      background-color: var(--bg-dark); 
+      color: var(--text-dark); 
+      background-image: 
+          linear-gradient(var(--accent-blue-dim) 1px, transparent 1px),
+          linear-gradient(90deg, var(--accent-blue-dim) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-attachment: fixed;
+    }
+
+    /* --- THE LOGIN CARD --- */
     .card {
-      width: 100%; max-width: 420px;
+      width: 100%; 
+      max-width: 420px;
       background-color: var(--card-light);
-      padding: 2rem 1.75rem; border-radius: 0.75rem;
+      padding: 2.5rem 2rem; 
+      border-radius: 0; /* Sharp corners for cyber feel */
       box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      position: relative;
     }
-    body.dark .card { background-color: var(--card-dark); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
-    h2 { margin-bottom: 0.5rem; }
-    p.subtitle { font-size: 0.9rem; margin-bottom: 1.5rem; opacity: 0.8; }
-    .field { margin-bottom: 1rem; }
+
+    body.dark .card { 
+      background-color: var(--card-dark); 
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      box-shadow: 0 0 30px rgba(0, 210, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Cyber Crosshair corners for the card */
+    body.dark .card::before,
+    body.dark .card::after {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        border: 2px solid var(--accent-blue);
+        pointer-events: none;
+    }
+    body.dark .card::before {
+        top: -1px; left: -1px;
+        border-right: none; border-bottom: none;
+    }
+    body.dark .card::after {
+        bottom: -1px; right: -1px;
+        border-left: none; border-top: none;
+    }
+
+    /* --- TYPOGRAPHY --- */
+    h2 { 
+      font-family: 'Anton', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem; 
+      line-height: 1;
+    }
+
+    /* Targeted CRT Scanlines for the Header */
+    .scanline-text { position: relative; display: inline-block; }
+    body.dark .scanline-text::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.65) 50%);
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    p.subtitle { 
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem; 
+      margin-bottom: 2rem; 
+      color: #64748b;
+    }
+    body.dark p.subtitle { color: #94a3b8; }
+
+    /* --- FORM INPUTS (Terminal Style) --- */
+    .field { margin-bottom: 1.25rem; }
+    
     input {
-      width: 100%; padding: 0.6rem 0.75rem;
-      border-radius: 0.5rem; border: 1px solid #cbd5e1; font-size: 0.95rem;
+      width: 100%; 
+      padding: 0.75rem 1rem;
+      border-radius: 4px; 
+      border: 1px solid #cbd5e1; 
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
     }
-    body.dark input { border-color: #475569; background-color: #0f172a; color: var(--text-dark); }
+
+    body.dark input { 
+      border-color: rgba(0, 210, 255, 0.3); 
+      background-color: rgba(0, 210, 255, 0.05); 
+      color: var(--accent-yellow); 
+      font-family: 'Roboto Mono', monospace; /* Monospace typing in dark mode */
+    }
+
+    body.dark input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    body.dark input::placeholder {
+      color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* --- BUTTONS --- */
     .btn {
-      width: 100%; padding: 0.6rem 0.75rem; border-radius: 999px;
-      border: 1px solid transparent; background-color: var(--accent);
-      color: #ffffff; font-size: 0.95rem; cursor: pointer; margin-top: 0.25rem;
+      width: 100%; 
+      padding: 0.75rem 1rem; 
+      border-radius: 999px;
+      border: 1px solid transparent; 
+      background-color: #09090b;
+      color: #ffffff; 
+      font-size: 0.95rem; 
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer; 
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
     }
-    .btn.outline { background-color: transparent; color: inherit; border-color: #64748b; }
-    .btn + .btn { margin-top: 0.5rem; }
+
+    body.dark .btn {
+      background-color: var(--accent-yellow);
+      color: #000000;
+      box-shadow: 0 0 10px rgba(250, 255, 107, 0.2);
+    }
+    
+    body.dark .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(250, 255, 107, 0.4);
+    }
+
+    .btn.outline { 
+      background-color: transparent; 
+      color: inherit; 
+      border-color: #64748b; 
+    }
+
+    body.dark .btn.outline {
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      box-shadow: none;
+    }
+
+    body.dark .btn.outline:hover:not(:disabled) {
+      background-color: rgba(0, 210, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+    }
+
+    .btn + .btn { margin-top: 1rem; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* --- MISC UI ELEMENTS --- */
     .divider {
-      text-align: center; margin: 1.25rem 0 1rem; font-size: 0.85rem; position: relative;
+      text-align: center; 
+      margin: 1.5rem 0; 
+      font-size: 0.85rem; 
+      position: relative;
+      font-family: 'Roboto Mono', monospace;
+      text-transform: uppercase;
+      color: #64748b;
     }
     .divider::before, .divider::after {
-      content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background-color: #cbd5e1;
+      content: ""; 
+      position: absolute; 
+      top: 50%; 
+      width: 40%; 
+      height: 1px; 
+      background-color: #cbd5e1;
     }
     .divider::before { left: 0; }
     .divider::after  { right: 0; }
-    body.dark .divider::before, body.dark .divider::after { background-color: #475569; }
-    .top-actions { display: flex; justify-content: space-between; margin-bottom: 0.75rem; align-items: center; }
-    .top-actions a { font-size: 0.85rem; color: var(--accent); text-decoration: none; }
-    .top-actions a:hover { text-decoration: underline; }
-    .top-actions button { width: auto; padding-inline: 0.8rem; font-size: 0.85rem; }
-    .msg { margin-top: 0.75rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 0.4rem; display: none; }
-    .msg.error   { background: #fee2e2; color: #b91c1c; display: block; }
-    .msg.success { background: #dcfce7; color: #166534; display: block; }
-    body.dark .msg.error   { background: #450a0a; color: #fca5a5; }
-    body.dark .msg.success { background: #052e16; color: #86efac; }
-    #otp-section { display: none; }
-    #email-otp-section { display: none; }
-    #resend-timer { font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.7; }
+    body.dark .divider::before, body.dark .divider::after { background-color: rgba(0, 210, 255, 0.3); }
+
+    .top-actions { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-bottom: 2rem; 
+      align-items: center; 
+    }
+    
+    .top-actions a { 
+      font-size: 0.9rem; 
+      font-family: 'Roboto Mono', monospace;
+      color: var(--accent-blue); 
+      text-decoration: none; 
+      font-weight: 600;
+    }
+    
+    .top-actions a:hover { text-shadow: 0 0 8px rgba(0, 210, 255, 0.5); }
+    
+    .top-actions button { 
+      width: auto; 
+      padding: 0.4rem 1rem; 
+      font-size: 0.8rem; 
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    /* Terminal-style status messages */
+    .msg { 
+      margin-top: 1rem; 
+      font-size: 0.85rem; 
+      font-family: 'Roboto Mono', monospace;
+      padding: 0.75rem; 
+      border-radius: 4px; 
+      display: none; 
+      text-align: center;
+    }
+    .msg.error   { background: #fee2e2; color: #b91c1c; display: block; border: 1px solid #f87171; }
+    .msg.success { background: #dcfce7; color: #166534; display: block; border: 1px solid #4ade80; }
+    
+    body.dark .msg.error { 
+      background: rgba(220, 38, 38, 0.1); 
+      color: #fca5a5; 
+      border: 1px solid #ef4444;
+      text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+    }
+    body.dark .msg.success { 
+      background: rgba(34, 197, 94, 0.1); 
+      color: #86efac; 
+      border: 1px solid #22c55e;
+      text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+    }
+
+    #otp-section, #email-otp-section { display: none; }
+    #resend-timer { font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.8; font-family: 'Roboto Mono', monospace; text-align: center; }
+    
+    .footer-text { margin-top:1.5rem; font-size:0.85rem; text-align: center; font-family: 'Roboto Mono', monospace;}
+    .footer-text a { color: var(--accent-blue); text-decoration: none; font-weight: bold;}
+    .footer-text a:hover { text-decoration: underline; text-shadow: 0 0 8px rgba(0, 210, 255, 0.5); }
+
+
+/* --- PAGE TRANSITION EFFECTS --- */
+body {
+    /* This makes the page smoothly fade and scale in when it loads */
+    animation: systemBoot 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; /* Starts invisible until the animation runs */
+}
+
+@keyframes systemBoot {
+    from { opacity: 0; transform: scale(0.98) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* This class gets added via JavaScript when the user clicks a link */
+/* --- AGGRESSIVE GLITCH TRANSITION --- */
+body.system-shutdown {
+    animation: accessGranted 0.5s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+    overflow: hidden;
+}
+
+@keyframes accessGranted {
+    0%   { transform: scale(1) translate(0, 0); filter: brightness(1); }
+    10%  { transform: scale(0.99) translate(-3px, 0); filter: brightness(1.3); text-shadow: 3px 0 var(--accent-blue); } 
+    20%  { transform: scale(0.99) translate(3px, 0); filter: brightness(1.5); text-shadow: -3px 0 var(--accent-yellow); }
+    30%  { transform: scale(1) translate(0, 0); filter: brightness(1.8) drop-shadow(0 0 20px var(--accent-blue)); } 
+    100% { transform: scale(1.3); filter: blur(12px) brightness(0); opacity: 0; } 
+}
+
+
+
+
   </style>
 </head>
 <body>
   <div class="card">
     <div class="top-actions">
-      <a href="/">Home</a>
-      <button id="theme-toggle" class="btn outline">Dark mode</button>
+      <a href="/public/index.html">&lt; RETURN</a>
+      <button id="theme-toggle" class="btn outline">INITIATE DARK MODE</button>
     </div>
-    <h2>Login</h2>
-    <p class="subtitle">Login with your credentials or use email OTP.</p>
+    
+    <h2 class="scanline-text">LOGIN</h2>
+    <p class="subtitle">Authenticate to access the Hexacore system.</p>
 
-    <!-- Standard userid + password login -->
     <div id="standard-section">
       <form id="login-form">
         <div class="field">
-          <input type="text" id="userid" placeholder="Gmail or phone number" required />
+          <input type="text" id="userid" placeholder="Enter ID or Email" required />
         </div>
         <div class="field">
-          <input type="password" id="password" placeholder="Password" required />
+          <input type="password" id="password" placeholder="Enter Password" required />
         </div>
         <button type="submit" class="btn">Login</button>
       </form>
@@ -86,41 +334,46 @@
 
     <div id="msg-standard" class="msg"></div>
 
-    <div class="divider">or</div>
+    <div class="divider">or bypass</div>
 
-    <!-- Email OTP login section -->
     <div id="email-otp-section">
       <div class="field">
-        <input type="email" id="otp-email" placeholder="Enter your email address" />
+        <input type="email" id="otp-email" placeholder="Enter target email address" />
       </div>
-      <button id="send-otp-btn" class="btn outline">Send OTP to Email</button>
+      <button id="send-otp-btn" class="btn outline">Transmit OTP</button>
       <div id="resend-timer"></div>
+      
       <div id="otp-section">
-        <div class="field" style="margin-top:0.75rem;">
-          <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" />
+        <div class="field" style="margin-top:1rem;">
+          <input type="text" id="otp-input" placeholder="Awaiting 6-digit key..." maxlength="6" />
         </div>
-        <button id="verify-otp-btn" class="btn">Verify OTP &amp; Login</button>
+        <button id="verify-otp-btn" class="btn">Verify &amp; Override</button>
       </div>
+      
       <div id="msg-otp" class="msg"></div>
-      <button id="back-btn" class="btn outline" style="margin-top:0.5rem;">Back to password login</button>
+      <button id="back-btn" class="btn outline" style="margin-top:1rem;">Cancel Bypass</button>
     </div>
 
-    <!-- Toggle button -->
-    <button id="toggle-email-otp" class="btn outline">Login with Email OTP instead</button>
+    <button id="toggle-email-otp" class="btn outline">Login via OTP Bypass</button>
 
-    <p style="margin-top:1rem;font-size:0.85rem;">New here? <a href="/register">Create an account</a></p>
+    <p class="footer-text">New operator? <a href="/register">Create an account</a></p>
   </div>
 
   <script>
     // ---- Theme ----
     const body     = document.body;
     const themeBtn = document.getElementById('theme-toggle');
+    
     function applyTheme(t) {
       body.classList.toggle('dark', t === 'dark');
-      themeBtn.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
+      // Changed text to match the Hexacore "hacking" vibe
+      themeBtn.textContent = t === 'dark' ? 'RESTORE LIGHT MODE' : 'INITIATE DARK MODE';
       localStorage.setItem('theme', t);
     }
+    
+    // Automatically apply theme from localStorage (carries over from index.html!)
     applyTheme(localStorage.getItem('theme') || 'light');
+    
     themeBtn.addEventListener('click', () => applyTheme(body.classList.contains('dark') ? 'light' : 'dark'));
 
     // ---- Sections ----
@@ -161,12 +414,12 @@
         });
         const data = await r.json();
         if (r.ok && data.status === 'success') {
-          showMsg('msg-standard', 'success', 'Login successful! Redirecting...');
+          showMsg('msg-standard', 'success', 'Access Granted. Redirecting...');
           setTimeout(() => window.location.href = '/', 800);
         } else {
-          showMsg('msg-standard', 'error', data.error || 'Login failed');
+          showMsg('msg-standard', 'error', data.error || 'Access Denied');
         }
-      } catch { showMsg('msg-standard', 'error', 'Network error'); }
+      } catch { showMsg('msg-standard', 'error', 'Connection to server lost'); }
     });
 
     // ---- OTP login ----
@@ -175,20 +428,20 @@
       let secs = 60;
       const el = document.getElementById('resend-timer');
       document.getElementById('send-otp-btn').disabled = true;
-      el.textContent = `Resend available in ${secs}s`;
+      el.textContent = `Transmission locked for ${secs}s`;
       resendTimer = setInterval(() => {
         secs--;
         if (secs <= 0) {
           clearInterval(resendTimer);
           document.getElementById('send-otp-btn').disabled = false;
           el.textContent = '';
-        } else { el.textContent = `Resend available in ${secs}s`; }
+        } else { el.textContent = `Transmission locked for ${secs}s`; }
       }, 1000);
     }
 
     document.getElementById('send-otp-btn').addEventListener('click', async () => {
       const email = document.getElementById('otp-email').value.trim();
-      if (!email) return showMsg('msg-otp', 'error', 'Please enter your email');
+      if (!email) return showMsg('msg-otp', 'error', 'Target email required');
       try {
         const r = await fetch('/send-otp', {
           method: 'POST',
@@ -197,19 +450,19 @@
         });
         const data = await r.json();
         if (r.ok && data.status === 'otp_sent') {
-          showMsg('msg-otp', 'success', 'OTP sent! Check your inbox.');
+          showMsg('msg-otp', 'success', 'OTP Transmitted. Check inbox.');
           otpSection.style.display = 'block';
           startResendCooldown();
         } else {
-          showMsg('msg-otp', 'error', data.error || 'Failed to send OTP');
+          showMsg('msg-otp', 'error', data.error || 'Transmission failed');
         }
-      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+      } catch { showMsg('msg-otp', 'error', 'Connection to server lost'); }
     });
 
     document.getElementById('verify-otp-btn').addEventListener('click', async () => {
       const email = document.getElementById('otp-email').value.trim();
       const otp   = document.getElementById('otp-input').value.trim();
-      if (!otp) return showMsg('msg-otp', 'error', 'Please enter the OTP');
+      if (!otp) return showMsg('msg-otp', 'error', 'Decryption key required');
       try {
         const r = await fetch('/verify-otp', {
           method: 'POST',
@@ -218,13 +471,35 @@
         });
         const data = await r.json();
         if (r.ok && data.status === 'success') {
-          showMsg('msg-otp', 'success', 'Login successful! Redirecting...');
+          showMsg('msg-otp', 'success', 'Override Successful. Redirecting...');
           setTimeout(() => window.location.href = '/', 800);
         } else {
-          showMsg('msg-otp', 'error', data.error || 'Invalid OTP');
+          showMsg('msg-otp', 'error', data.error || 'Invalid Key');
         }
-      } catch { showMsg('msg-otp', 'error', 'Network error'); }
+      } catch { showMsg('msg-otp', 'error', 'Connection to server lost'); }
     });
+
+// --- SEAMLESS PAGE TRANSITIONS ---
+// Find all links that navigate to other pages
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const targetUrl = this.getAttribute('href');
+        
+        // Only intercept if it's a real link to another page (not '#' or external)
+        if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('http')) {
+            e.preventDefault(); // Stop the browser from instantly jumping
+            
+            // Trigger the "dive in" exit animation
+            document.body.classList.add('system-shutdown');
+            
+            // Wait exactly 400ms (matching the CSS animation) before loading the new page
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 400); 
+        }
+    });
+});
+
   </script>
 </body>
 </html>
