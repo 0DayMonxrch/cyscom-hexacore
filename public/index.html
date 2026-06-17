@@ -50,6 +50,55 @@
             background-attachment: fixed;
         }
 
+        /* --- SCATTERED CYSCOM BACKGROUND --- */
+/* --- FIXED SCATTERED CYSCOM BACKGROUND --- */
+.scatter-container {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
+    pointer-events: none; 
+    z-index: -1; /* CRITICAL: This pushes letters behind content */
+    overflow: hidden;
+}
+
+.bg-letter {
+    position: absolute;
+    opacity: 0; 
+    transition: opacity 0.8s ease;
+}
+
+body.dark .bg-letter {
+    opacity: 0.15; /* Subtle watermark opacity */
+}
+
+/* New Layout: The "Orbit" Pattern to prevent overlaps */
+.l-c1 { top: 40%; left: 5%; width: 20vw; transform: rotate(-10deg); }
+.l-y  { top: 10%; left: 15%; width: 18vw; transform: rotate(10deg); }
+.l-s  { top: 10%; left: 31%; width: 20vw; transform: rotate(5deg); }
+.l-c2 { top: 10%; right: 29%; width: 20vw; transform: rotate(-5deg); }
+.l-o  { top: 11%; right: 8%; width: 22vw; transform: rotate(-4deg); }
+.l-m  { bottom: 10%; right: 5%; width: 22vw; transform: rotate(6deg); }
+
+/* SVG Visual Style */
+.bg-letter text {
+    font-family: 'Anton', sans-serif;
+    font-size: 85px;
+    fill: transparent; 
+    stroke: var(--accent-blue);
+    stroke-width: 2px;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 500;
+    filter: drop-shadow(0 0 8px var(--accent-blue));
+}
+
+body.dark .bg-letter text {
+    animation: drawScattered 3s ease-in-out forwards;
+}
+
+@keyframes drawScattered {
+    to { stroke-dashoffset: 0; }
+}
+
 
         /* --- NAVBAR --- */
         .navbar {
@@ -274,6 +323,15 @@ body.system-shutdown {
     </style>
 </head>
 <body>
+    <div class="scatter-container">
+    <svg class="bg-letter l-c1" viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle">C</text></svg>
+    <svg class="bg-letter l-y"  viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle">Y</text></svg>
+    <svg class="bg-letter l-s"  viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle">S</text></svg>
+    <svg class="bg-letter l-c2" viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle">C</text></svg>
+    <svg class="bg-letter l-o"  viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle">O</text></svg>
+    <svg class="bg-letter l-m"  viewBox="0 0 100 100"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle">M</text></svg>
+</div>
+</div>
 
     <nav class="navbar">
         <a href="#" class="brand">CYSCOM</a>
