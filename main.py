@@ -44,8 +44,8 @@ Base.metadata.create_all(bind=engine)
 def get_real_ip(request: Request) -> str:
     forwarded = request.headers.get("X-Forwarded-For")
     if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host
+        return forwarded.split(",")[-1].strip()
+    return request.client.host  
 
 #get_remote_address reads request.client.host. 
 #On Render, all requests arrive via their load balancer, so request.client.host is always the same internal proxy IP. 
