@@ -450,9 +450,7 @@
         vitNoRadio.addEventListener('change', toggleRegNo);
 
         // --- 4. FORM SUBMISSION ---
-        // Determine the base URL depending on whether we are on localhost or production
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const BASE_URL = isLocalhost ? 'http://127.0.0.1:8000' : '/api';
+        const BASE_URL = 'http://127.0.0.1:8000';
         
         function showMsg(type, text) {
             const msgBox = document.getElementById('status-msg');
