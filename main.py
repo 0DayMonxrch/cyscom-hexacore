@@ -1,13 +1,22 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi.responses import JSONResponse
+import os
+from dotenv import load_dotenv
 
-# --- DATABASE SETUP (SUPABASE POSTGRESQL) ---
-# Ensure you paste your actual Supabase URI connection string here
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:CyscomHexacore@db.bfnqczjdtqghdtzyqxrt.supabase.co:5432/postgres"
+load_dotenv()
+
+# --- DATABASE SETUP
+SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
+if not SQLALCHEMY_DATABASE_URL:
+    raise ValueError("No SQLALCHEMY_DATABASE_URL set for database connection")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -28,12 +37,26 @@ class User(Base):
 Base.metadata.create_all(bind=engine)
 
 # --- FASTAPI APP INITIALIZATION ---
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="Hexacore Mainframe API")
+app.state.limiter = limiter
 
-# Configure CORS to allow your frontend to communicate with the backend
+def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={"error": "RATE_LIMIT_EXCEEDED", "status": "failed"}
+    )
+
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_handler)
+
+# Configure CORS to block malicious cross-origin requests
+# Reads allowed origins from .env, defaults to localhost for development
+frontend_url_env = os.getenv("FRONTEND_URL", "http://localhost:3000,http://127.0.0.1:3000")
+allowed_origins = [url.strip() for url in frontend_url_env.split(",") if url.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows requests from any origin (e.g., your local Live Server)
+    allow_origins=allowed_origins,  # Strictly locked down to specific domains
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,7 +74,8 @@ class CompetitionRegister(BaseModel):
 
 # --- API ROUTES ---
 @app.post("/register-participant")
-async def register_participant(participant: CompetitionRegister):
+@limiter.limit("5/hour")
+async def register_participant(request: Request, participant: CompetitionRegister):
     db = SessionLocal()
     
     try:

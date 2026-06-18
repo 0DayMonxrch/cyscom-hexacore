@@ -335,12 +335,12 @@
                 
                 <form id="registration-form">
                     <div class="input-group">
-                        <label for="fullname">Operative Name</label>
+                        <label for="fullname">Student Name</label>
                         <input type="text" id="fullname" placeholder="Your Name" required />
                     </div>
 
                     <div class="input-group">
-                        <label>Academy Affiliation (VIT Chennai?)</label>
+                        <label>Are you a VITian?</label>
                         <div class="radio-options">
                             <label class="radio-label">
                                 <input type="radio" name="vit-status" id="vit-yes" value="yes" checked /> Yes
@@ -352,22 +352,22 @@
                     </div>
 
                     <div class="input-group" id="regno-container">
-                        <label for="regno">Registration ID (for Non-VITians => None)</label>
+                        <label for="regno">Registration ID (for Non-VITians -> None)</label>
                         <input type="text" id="regno" placeholder="25XXX1234" />
                     </div>
 
                     <div class="input-group">
-                        <label for="email">Secure Email</label>
+                        <label for="email">Email</label>
                         <input type="email" id="email" placeholder="alias@domain.com" required />
                     </div>
 
                     <div class="input-group">
-                        <label for="phone">Comm Link (Phone)</label>
+                        <label for="phone">Phone</label>
                         <input type="tel" id="phone" placeholder="9876543210" required />
                     </div>
 
                     <div class="input-group">
-                        <label for="college">Base of Operations (College)</label>
+                        <label for="college">College</label>
                         <input type="text" id="college" placeholder="ABC college" required />
                     </div>
 
@@ -381,13 +381,13 @@
         <div class="modal-content">
             <h2>ACCESS GRANTED</h2>
             <p class="mono-text" style="margin: 1.5rem 0; color: #d1d5db;">
-                Credentials verified. Briefing schedule generated:<br><br>
+                Credentials verified. Schedule generated:<br><br>
                 <span style="color: var(--accent-blue); font-weight: bold; font-size: 1.2rem;">June 22, 2026 | 7:00 PM</span>
             </p>
             
             <a href="https://chat.whatsapp.com/your-invite-link" target="_blank" class="whatsapp-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                Join Comms Channel
+                Join Our Offical WhatsApp Group
             </a>
             <br>
             <button class="proceed-btn" id="return-home-btn">Return to Mainframe</button>
@@ -458,9 +458,13 @@
             msgBox.textContent = '> ' + text;
         }
 
+        let isSubmitting = false;
+
         document.getElementById('reg-btn').addEventListener('click', async (e) => {
             e.preventDefault();
             
+            if (isSubmitting) return; // Prevent double clicks / flooding
+
             const full_name = document.getElementById('fullname').value.trim();
             const registration_number = regnoInput.value.trim();
             const email = document.getElementById('email').value.trim();
@@ -468,14 +472,36 @@
             const college_name = document.getElementById('college').value.trim();
             const is_vit = vitYesRadio.checked;
 
+            // --- Zod-like Validation Rules ---
+            const nameRegex = /^[A-Za-z\s]{3,50}$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^[0-9]{10}$/; // Basic 10-digit check
+            const regnoRegex = /^[0-9]{2}[A-Za-z]{3}[0-9]{4}$/i; // E.g., 25XXX1234
+
             if (!full_name || !email || !phone_number || !college_name) {
                 return showMsg('error', 'ERR: MISSING_PARAMETERS');
             }
-            if (is_vit && !registration_number) {
-                return showMsg('error', 'ERR: REG_ID_REQUIRED_FOR_VIT');
+            if (!nameRegex.test(full_name)) {
+                return showMsg('error', 'ERR: INVALID_NAME_FORMAT');
+            }
+            if (!emailRegex.test(email)) {
+                return showMsg('error', 'ERR: INVALID_EMAIL_FORMAT');
+            }
+            if (!phoneRegex.test(phone_number)) {
+                return showMsg('error', 'ERR: INVALID_PHONE_NUMBER (10 Digits Required)');
+            }
+            
+            if (is_vit) {
+                if (!registration_number) {
+                    return showMsg('error', 'ERR: REG_ID_REQUIRED_FOR_VIT');
+                }
+                if (!regnoRegex.test(registration_number)) {
+                    return showMsg('error', 'ERR: INVALID_REG_ID (Expected format: 25XXX1234)');
+                }
             }
 
             try {
+                isSubmitting = true;
                 const btn = document.getElementById('reg-btn');
                 const originalText = btn.textContent;
                 btn.textContent = 'TRANSMITTING...';
@@ -498,11 +524,14 @@
                 
                 btn.textContent = originalText;
                 btn.disabled = false;
+                isSubmitting = false;
 
             } catch { 
                 showMsg('error', 'ERR: NO_CONNECTION_TO_HOST'); 
-                document.getElementById('reg-btn').textContent = 'Establish Link';
-                document.getElementById('reg-btn').disabled = false;
+                const btn = document.getElementById('reg-btn');
+                btn.textContent = 'Establish Link';
+                btn.disabled = false;
+                isSubmitting = false;
             }
         });
 
