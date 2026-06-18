@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,6 +12,8 @@ from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse
 import os
 from dotenv import load_dotenv
+import re
+import logging
 
 load_dotenv()
 
@@ -26,22 +30,30 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String, nullable=False)
-    registration_number = Column(String, nullable=True)
+    full_name = Column(String, nullable=False, max_length=100)
+    registration_number = Column(String, nullable=True, max_length=9) #eg: 20AAA0000 format
     email = Column(String, unique=True, index=True, nullable=False)
-    phone_number = Column(String, nullable=False)
-    college_name = Column(String, nullable=False)
+    phone_number = Column(String, nullable=False, max_length=15)
+    college_name = Column(String, nullable=False, max_length=150)
     is_vit = Column(Boolean, default=False)
 
 # Initialize Database Tables (Will create the table if it doesn't exist)
 Base.metadata.create_all(bind=engine)
 
 # --- FASTAPI APP INITIALIZATION ---
-limiter = Limiter(
-    key_func=get_remote_address,
-    storage_uri=os.getenv("RATE_LIMIT_STORAGE_URI", "memory://")
-)
-app = FastAPI(title="Hexacore Mainframe API")
+def get_real_ip(request: Request) -> str:
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host
+
+#get_remote_address reads request.client.host. 
+#On Render, all requests arrive via their load balancer, so request.client.host is always the same internal proxy IP. 
+#This means all users share a single rate limit bucket
+
+limiter = Limiter(key_func=get_real_ip)
+
+app = FastAPI(title="Hexacore Mainframe API", docs_url=None, redoc_url=None) #disable docs in production
 app.state.limiter = limiter
 
 def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
@@ -61,7 +73,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,  # Strictly locked down to specific domains
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["POST"], #Minimum surface area
     allow_headers=["*"],
 )
 
@@ -76,7 +88,7 @@ class CompetitionRegister(BaseModel):
     is_vit: bool
 
 # --- API ROUTES ---
-@app.post("/register-participant")
+@app.post("/register-participant", status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/hour")
 async def register_participant(request: Request, participant: CompetitionRegister):
     db = SessionLocal()
@@ -85,10 +97,21 @@ async def register_participant(request: Request, participant: CompetitionRegiste
         # 1. Check for duplicate operatives (emails)
         existing_user = db.query(User).filter(User.email == participant.email).first()
         if existing_user:
-            return {"error": "OPERATIVE_ALREADY_REGISTERED", "status": "failed"}
+            # 409 Conflict is the standard response when a resource already exists
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already registered"
+            )
+        
+        # Backend validation for VIT students
+        if participant.is_vit: 
+            if not re.fullmatch(r'\d{2}[A-Z]{3}\d{4}', participant.registration_number or ""):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, 
+                    detail="Invalid VIT registration number format"
+                )
         
         # 2. Prepare the new record
-        # If they are not from VIT, ensure the registration number is stored cleanly
         final_reg_number = participant.registration_number if participant.is_vit else "N/A"
         
         new_user = User(
@@ -100,16 +123,30 @@ async def register_participant(request: Request, participant: CompetitionRegiste
             is_vit=participant.is_vit
         )
         
-        # 3. Commit to the Supabase database
+        # 3. Commit to the database
         db.add(new_user)
         db.commit()
         
+        # Because we set status_code=status.HTTP_201_CREATED in the decorator, 
+        # this will return a 201 status code automatically.
         return {"status": "success"}
+    
+    except HTTPException as he:
+        # Catch explicit HTTP exceptions first so they aren't masked by the generic Exception block
+        db.rollback()
+        raise he
         
     except Exception as e:
-        # Catch unexpected database errors so the server doesn't crash
+        logger = logging.getLogger(__name__)
+        logger.exception("Registration failed")
         db.rollback()
-        return {"error": "INTERNAL_SERVER_ERROR", "status": "failed"}
+        
+        # 500 Internal Server Error returned via JSONResponse
+        # This sends the correct HTTP status code while keeping your custom dictionary format
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"error": "INTERNAL_SERVER_ERROR", "status": "failed"}
+        )
         
     finally:
         # Always close the connection
