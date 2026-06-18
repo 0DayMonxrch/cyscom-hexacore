@@ -17,3 +17,5 @@ npm-debug.log*
 #IDE
 .vscode
 test/
+
+*.db
