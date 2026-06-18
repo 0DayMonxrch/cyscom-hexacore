@@ -30,11 +30,11 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String, nullable=False, max_length=100)
-    registration_number = Column(String, nullable=True, max_length=9) #eg: 20AAA0000 format
+    full_name = Column(String(100), nullable=False)
+    registration_number = Column(String(9), nullable=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    phone_number = Column(String, nullable=False, max_length=15)
-    college_name = Column(String, nullable=False, max_length=150)
+    phone_number = Column(String(15), nullable=False)
+    college_name = Column(String(150), nullable=False)
     is_vit = Column(Boolean, default=False)
 
 # Initialize Database Tables (Will create the table if it doesn't exist)
@@ -51,7 +51,10 @@ def get_real_ip(request: Request) -> str:
 #On Render, all requests arrive via their load balancer, so request.client.host is always the same internal proxy IP. 
 #This means all users share a single rate limit bucket
 
-limiter = Limiter(key_func=get_real_ip)
+limiter = Limiter(
+    key_func=get_real_ip,
+    storage_uri=os.getenv("RATE_LIMIT_STORAGE_URI", "memory://")
+)
 
 app = FastAPI(title="Hexacore Mainframe API", docs_url=None, redoc_url=None) #disable docs in production
 app.state.limiter = limiter
@@ -66,7 +69,7 @@ app.add_exception_handler(RateLimitExceeded, custom_rate_limit_handler)
 
 # Configure CORS to block malicious cross-origin requests
 # Reads allowed origins from .env, defaults to localhost for development
-frontend_url_env = os.getenv("FRONTEND_URL", "http://localhost:3000,http://127.0.0.1:3000")
+frontend_url_env = os.getenv("FRONTEND_URL", "http://localhost:3000")
 allowed_origins = [url.strip() for url in frontend_url_env.split(",") if url.strip()]
 
 app.add_middleware(
@@ -77,14 +80,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- PYDANTIC VALIDATION SCHEMA ---
-# This matches the JSON.stringify payload sent from your register.html exactly
+from pydantic import BaseModel, EmailStr, Field
+
 class CompetitionRegister(BaseModel):
-    full_name: str
-    registration_number: str = None
+    full_name: str = Field(..., min_length=3, max_length=100)
+    registration_number: str = Field(None, max_length=9)
     email: EmailStr
-    phone_number: str
-    college_name: str
+    phone_number: str = Field(..., min_length=10, max_length=15)
+    college_name: str = Field(..., max_length=150)
     is_vit: bool
 
 # --- API ROUTES ---
@@ -97,18 +100,17 @@ async def register_participant(request: Request, participant: CompetitionRegiste
         # 1. Check for duplicate operatives (emails)
         existing_user = db.query(User).filter(User.email == participant.email).first()
         if existing_user:
-            # 409 Conflict is the standard response when a resource already exists
-            raise HTTPException(
+            return JSONResponse(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Email already registered"
+                content={"error": "ALREADY_REGISTERED", "status": "failed"}
             )
         
         # Backend validation for VIT students
         if participant.is_vit: 
             if not re.fullmatch(r'\d{2}[A-Z]{3}\d{4}', participant.registration_number or ""):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, 
-                    detail="Invalid VIT registration number format"
+                return JSONResponse(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    content={"error": "INVALID_REG_ID", "status": "failed"}
                 )
         
         # 2. Prepare the new record
