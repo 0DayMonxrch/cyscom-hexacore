@@ -42,9 +42,23 @@ Base.metadata.create_all(bind=engine)
 
 # --- FASTAPI APP INITIALIZATION ---
 def get_real_ip(request: Request) -> str:
+    # DigitalOcean App Platform uses DO-Connecting-IP
+    do_ip = request.headers.get("DO-Connecting-IP")
+    if do_ip:
+        return do_ip
+        
+    # Nginx commonly uses X-Real-IP
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip
+
+    # Fallback to X-Forwarded-For
     forwarded = request.headers.get("X-Forwarded-For")
     if forwarded:
+        # Note: If your LB appends the real IP, [-1] is correct.
+        # If your LB is TCP passthrough, this is still spoofable.
         return forwarded.split(",")[-1].strip()
+        
     return request.client.host  
 
 #get_remote_address reads request.client.host. 
