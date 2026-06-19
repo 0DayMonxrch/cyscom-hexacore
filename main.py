@@ -109,12 +109,6 @@ class CompetitionRegister(BaseModel):
 @limiter.limit("5/hour")
 async def register_participant(request: Request, participant: CompetitionRegister):
     db = SessionLocal()
-    
-    # --- DEBUGGING LOG ---
-    # Log all headers to see exactly what DigitalOcean is passing to us
-    logger = logging.getLogger(__name__)
-    logger.error(f"DEBUG HEADERS: {dict(request.headers)}")
-    # ---------------------
 
     try:
         # 1. Check for duplicate operatives (emails)
